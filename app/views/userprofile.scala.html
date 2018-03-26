@@ -1,0 +1,18 @@
+@()
+@import helper._
+@main("User Profile Page"){
+<div>
+    @helper.form(){
+    @CSRF.formField
+
+    @helper.inputText(userForm("firstname"), '_label -> "FirstName")
+    @helper.inputText(userForm("middlename"), '_label -> "MiddleName")
+    @helper.inputText(userForm("lastname"), '_label -> "LastName")
+    @helper.inputText(userForm("mobile"), '_label -> "Contact No.")
+    @helper.select(userForm("gender"),Seq("female" -> "Female", "male" -> "Male"), '_label ->"Gender")
+    @helper.inputText(userForm("age"), '_label -> "Age")
+    @helper.inputText(userForm("hobbies"), '_label -> "Hobbies")
+    <input type="submit" value ="submit">
+    }
+</div>
+}

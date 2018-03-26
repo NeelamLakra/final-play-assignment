@@ -1,0 +1,12 @@
+@()
+@import helper._
+
+@main("Login page") {
+<div>
+    @helper.form(){
+    @CSRF.formField
+    @helper.inputText(userForm("username"), '_label -> "Username(email)")
+    @helper.inputText(userForm("password"), '_label -> "Password")
+    <input type="submit" value="submit"/>
+</div>
+}
