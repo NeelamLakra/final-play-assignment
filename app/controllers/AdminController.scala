@@ -24,6 +24,24 @@ class AdminController @Inject()(cc: ControllerComponents,
       Ok(views.html.assignments(userForms.assignmentForm))
   }
 
+  def showAdmin() = Action.async{
+    implicit request =>
+      val username = request.session.get("username")
+      username match {
+        case Some(username) => {
+          val userData = userInfoRepo.getUserDetails(username)
+          userData.map{
+            userdata =>
+              val userProfile = UserProfile(userdata.firstname, userdata.middlename,
+                userdata.lastname,userdata.username, userdata.mobile, userdata.gender, userdata.age, userdata.hobbies)
+              val filledProfileForm = userForms.userProfileForm.fill(userProfile)
+              Ok(views.html.userprofile(filledProfileForm))
+          }
+        }
+        case None => Future.successful(InternalServerError("password cannot be changed"))
+      }
+  }
+
   def addAssignment() = Action.async {
     implicit request =>
       userForms.assignmentForm.bindFromRequest().fold(
