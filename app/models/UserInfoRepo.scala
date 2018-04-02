@@ -18,8 +18,8 @@ case class UserInfo(id :Int,
                     gender:String,
                     age:Int,
                     hobbies:String,
-                    isEnable:String,
-                    isAdmin:String)
+                    isEnable:Boolean = true,
+                    isAdmin:Boolean = false)
 
 
 trait UserRepoData extends HasDatabaseConfigProvider[JdbcProfile] {
@@ -36,8 +36,8 @@ trait UserRepoData extends HasDatabaseConfigProvider[JdbcProfile] {
     def gender:Rep[String]=column[String]("gender")
     def age:Rep[Int]=column[Int]("age")
     def hobbies:Rep[String] = column[String]("hobbies")
-    def isEnable:Rep[String]=column[String]("isEnable")
-    def isAdmin:Rep[String]=column[String]("isAdmin")
+    def isEnable:Rep[Boolean]=column[Boolean]("isEnable")
+    def isAdmin:Rep[Boolean]=column[Boolean]("isAdmin")
 
     def * : ProvenShape[UserInfo]=(id,firstname,middlename,lastname,username,password,mobile,gender,age,hobbies,isEnable,isAdmin) <> (UserInfo.tupled,UserInfo.unapply)
   }
@@ -51,8 +51,8 @@ trait UserProfileRepo {
   def updateProfile(userName: String,updatedUserData: UserProfile): Future[Boolean]
   def getUserDetails(userName: String): Future[UserProfile]
   def updatePassword(userName: String,newPassword: String): Future[Boolean]
-  def isUserEnabled(userName: String): Future[String]
-  def enableDisableUser(userName: String,newValue: String): Future[Boolean]
+  def isUserEnabled(userName: String): Future[Boolean]
+  def enableDisableUser(userName: String,newValue: Boolean): Future[Boolean]
   def getAllUsers: Future[List[UserInfo]]
   def validateUser(userName: String,password: String): Future[Option[UserInfo]]
 
@@ -63,8 +63,45 @@ trait UserProfileRepoImple extends UserProfileRepo {
   self: UserRepoData =>
 
   import profile.api._
+
+  def isAdminCheck(emailId: String): Future[Boolean] = {
+    db.run(UserQuery.filter(user=> user.username === emailId && user.isAdmin).to[List].result).map(_.nonEmpty)
+  }
+
+  def getUser(): Future[List[UserInfo]] = {
+    db.run(UserQuery.filter(_.isAdmin===true).to[List].result)
+  }
+
+  def enable(emailId: String)=
+    db.run(UserQuery.filter(_.username===emailId).map(_.isEnable).update(true)).map(_>0)
+
+  def disable(emailId: String) =
+    db.run(UserQuery.filter(_.username === emailId).map(_.isEnable).update(false)).map(_>0)
+
+  def isEnableCheck(emailId:String): Future[Boolean] = {
+    db.run(UserQuery.filter(user => user.username === emailId && user.isEnable).to[List].result).map(_.nonEmpty)
+  }
+  def getUserName(emailId: String): Future[String] = {
+    val name = (for (user <- UserQuery if user.username === emailId) yield user.firstname).result.headOption
+    db.run(name).map {
+      case Some(firstName) => firstName
+    }
+  }
+
+  def validationOfUser(emailId: String,password: String): Future[Boolean] = {
+    val queryResult = UserQuery.filter(user => user.username=== emailId && user.password === password).result.headOption
+    db.run(queryResult)
+      .map{
+        case Some(_) => true
+        case None => false
+      }
+  }
+
+
+
+
   def getAllUsers: Future[List[UserInfo]] =
-    db.run(UserQuery.filter(user => user.isAdmin === "no").to[List].result)
+    db.run(UserQuery.filter(user => user.isAdmin === false).to[List].result)
 
   def validateUser(userName: String,password: String): Future[Option[UserInfo]] =
     db.run(UserQuery.filter(user => user.username === userName && user.password === password ).result.headOption)
@@ -93,10 +130,10 @@ trait UserProfileRepoImple extends UserProfileRepo {
     db.run(UserQuery.filter(user => user.username === userName)
       .map(user => user.password).update(newPassword)).map(_ > 0)
 
-  def isUserEnabled(userName: String): Future[String] =
+  def isUserEnabled(userName: String): Future[Boolean] =
     db.run(UserQuery.filter(user => user.username === userName).map(user => user.isEnable).result.head)
 
-  def enableDisableUser(userName: String, newValue: String): Future[Boolean] =
+  def enableDisableUser(userName: String, newValue: Boolean): Future[Boolean] =
     db.run(UserQuery.filter(user => user.username === userName).map(user => user.isEnable).update(newValue)).map(_ > 0)
 
 }

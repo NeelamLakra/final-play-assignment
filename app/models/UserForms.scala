@@ -6,7 +6,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
 import scala.util.matching.Regex
 
-case class UserData(firstname: String, middlename:String, lastName: String,username: String, password: String, confirmPassword: String,mobile:String ,gender: String,age: Int,
+case class UserData(firstname: String, middlename:String, lastname: String,username: String, password: String, confirmPassword: String,mobile:String ,gender: String,age: Int,
                     hobbies:String)
 
 case class SignInData(username:String, password:String)

@@ -25,15 +25,25 @@ class SigninController @Inject()(userForms: UserForms, cc: ControllerComponents,
         },
         data => {
           for {
+            isAdmin <- userInfoRepo.isAdminCheck(data.username)
             isEnable <- userInfoRepo.isUserEnabled(data.username)
             validUser <- userInfoRepo.validateUser(data.username, data.password)
           } yield {
-            if (true) {
+            if (isAdmin == true) {
               validUser match {
-                case Some(user) => Redirect(routes.UserProfileController.showUser()).withSession("username" -> data.username, "isAdmin" -> true.toString).flashing("logged in" -> "logged in successfully")
+              //  case Some(user) => Redirect(routes.UserProfileController.showUser()).withSession("username" -> data.username, "isAdmin" -> true.toString).flashing("logged in" -> "logged in successfully")
+                case Some(user) => Redirect(routes.AdminController.adminProfile()).withSession("username" -> data.username).flashing("logged in" -> "logged in successfully")
                 case None => Redirect(routes.SigninController.loginForm()).flashing("incorrect user" -> "invalid credentials")
               }
             }
+              else if (isAdmin == false && isEnable == true) {
+                validUser match {
+                //  case Some(user) => Redirect(routes.AdminController.adminProfile()).withSession("username" -> data.username, "isAdmin" -> true.toString).flashing("logged in" -> "logged in successfully")
+                  case Some(user) => Redirect(routes.UserProfileController.userProfile()).withSession("username" -> data.username, "isAdmin" -> true.toString).flashing("logged in" -> "logged in successfully")
+
+                  case None => Redirect(routes.SigninController.loginForm()).flashing("incorrect user" -> "invalid credentials")
+                }
+              }
             else {
               Redirect(routes.SigninController.loginForm()).flashing("disabled" -> "can't login, account disabled")
             }
@@ -57,7 +67,7 @@ class SigninController @Inject()(userForms: UserForms, cc: ControllerComponents,
           userInfoRepo.checkUserExists(data.username) flatMap {
             case true => userInfoRepo.updatePassword(data.username, data.newPassword).map {
               case true =>
-                Redirect(routes.UserProfileController.showUser()).withSession("userName" -> data.username).flashing("password updated" -> "password changed successfully")
+                Redirect(routes.SigninController.loginForm()).withSession("userName" -> data.username).flashing("password updated" -> "password changed successfully")
               case false => InternalServerError("Could not update password")
             }
             case false => Future.successful(Redirect(routes.SigninController.forgotPasswordForm()).flashing("not exists" -> "user does not exist, try again.."))

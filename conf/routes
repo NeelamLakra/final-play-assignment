@@ -10,8 +10,11 @@ POST     /register                  controllers.RegistrationController.register
 
 
 GET     /userprofile                 controllers.UserProfileController.showUser
+GET     /userprofile                 controllers.UserProfileController.userProfile
 POST    /updateUser                  controllers.UserProfileController.updateUser
 GET     /logout                      controllers.UserProfileController.logout
+GET     /userViewAssignments         controllers.UserProfileController.userViewAssignments
+
 
 GET     /login                       controllers.SigninController.loginForm
 POST    /validateUser                controllers.SigninController.handleLogin
@@ -20,8 +23,10 @@ GET     /changePassword              controllers.SigninController.forgotPassword
 
 GET     /assignmentForm              controllers.AdminController.showAssignmentForm
 POST    /addAssignment               controllers.AdminController.addAssignment
+GET    /adminProfile               controllers.AdminController.adminProfile
+
 GET     /displayUsers                controllers.AdminController.displayUsers
-GET     /enableDisableUser          controllers.AdminController.enableOrDisableUser(username: String,value: String)
+GET     /enableDisableUser          controllers.AdminController.enableOrDisableUser(username: String,value: Boolean)
 GET     /showAssignments            controllers.AdminController.viewAssignments
 GET    /deleteAssignment           controllers.AdminController.deleteAssignment(id: Int)
 

@@ -15,6 +15,10 @@ class AdminController @Inject()(cc: ControllerComponents,
   extends AbstractController(cc) with I18nSupport {
 
 
+  def adminProfile() = Action {
+    implicit request =>
+      Ok(views.html.adminnavbar())
+  }
   def showAssignmentForm() = Action {
     implicit request =>
       Ok(views.html.assignments(userForms.assignmentForm))
@@ -43,7 +47,7 @@ class AdminController @Inject()(cc: ControllerComponents,
       }
   }
 
-  def enableOrDisableUser(username: String,updatedValue: String) = Action.async {
+  def enableOrDisableUser(username: String,updatedValue: Boolean) = Action.async {
     implicit request =>
       userInfoRepo.enableDisableUser(username,updatedValue).map{
         case true => Redirect(routes.AdminController.displayUsers())
