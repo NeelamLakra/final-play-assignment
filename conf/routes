@@ -23,7 +23,9 @@ GET     /changePassword              controllers.SigninController.forgotPassword
 
 GET     /assignmentForm              controllers.AdminController.showAssignmentForm
 POST    /addAssignment               controllers.AdminController.addAssignment
-GET    /adminProfile               controllers.AdminController.adminProfile
+GET    /adminPage                    controllers.AdminController.adminProfile
+GET     /adminProfile                 controllers.AdminController.showAdmin
+
 
 GET     /displayUsers                controllers.AdminController.displayUsers
 GET     /enableDisableUser          controllers.AdminController.enableOrDisableUser(username: String,value: Boolean)

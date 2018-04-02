@@ -29,17 +29,15 @@ class SigninController @Inject()(userForms: UserForms, cc: ControllerComponents,
             isEnable <- userInfoRepo.isUserEnabled(data.username)
             validUser <- userInfoRepo.validateUser(data.username, data.password)
           } yield {
-            if (isAdmin == true) {
+            if (isAdmin) {
               validUser match {
-              //  case Some(user) => Redirect(routes.UserProfileController.showUser()).withSession("username" -> data.username, "isAdmin" -> true.toString).flashing("logged in" -> "logged in successfully")
-                case Some(user) => Redirect(routes.AdminController.adminProfile()).withSession("username" -> data.username).flashing("logged in" -> "logged in successfully")
+                case Some(user) => Redirect(routes.AdminController.showAdmin()).withSession("username" -> data.username, "isAdmin" ->true.toString).flashing("logged in" -> "logged in successfully")
                 case None => Redirect(routes.SigninController.loginForm()).flashing("incorrect user" -> "invalid credentials")
               }
             }
-              else if (isAdmin == false && isEnable == true) {
+              else if (!isAdmin && isEnable ==true) {
                 validUser match {
-                //  case Some(user) => Redirect(routes.AdminController.adminProfile()).withSession("username" -> data.username, "isAdmin" -> true.toString).flashing("logged in" -> "logged in successfully")
-                  case Some(user) => Redirect(routes.UserProfileController.userProfile()).withSession("username" -> data.username, "isAdmin" -> true.toString).flashing("logged in" -> "logged in successfully")
+                  case Some(user) => Redirect(routes.UserProfileController.userProfile()).withSession("username" -> data.username, "isAdmin" -> false.toString).flashing("logged in" -> "logged in successfully")
 
                   case None => Redirect(routes.SigninController.loginForm()).flashing("incorrect user" -> "invalid credentials")
                 }
