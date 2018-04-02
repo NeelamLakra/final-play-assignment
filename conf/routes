@@ -5,9 +5,27 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
-GET     /signup                     controllers.ApplicationController.signup
-GET     /signin                      controllers.ApplicationController.register
-GET     /forgotPassword             controllers.ApplicationController.forgotpassword
+GET     /signup                     controllers.RegistrationController.signup
+POST     /register                  controllers.RegistrationController.register
+
+
+GET     /userprofile                 controllers.UserProfileController.showUser
+POST    /updateUser                  controllers.UserProfileController.updateUser
+GET     /logout                      controllers.UserProfileController.logout
+
+GET     /login                       controllers.SigninController.loginForm
+POST    /validateUser                controllers.SigninController.handleLogin
+POST    /updatePassword              controllers.SigninController.changePassword
+GET     /changePassword              controllers.SigninController.forgotPasswordForm
+
+GET     /assignmentForm              controllers.AdminController.showAssignmentForm
+POST    /addAssignment               controllers.AdminController.addAssignment
+GET     /displayUsers                controllers.AdminController.displayUsers
+GET     /enableDisableUser          controllers.AdminController.enableOrDisableUser(username: String,value: String)
+GET     /showAssignments            controllers.AdminController.viewAssignments
+GET    /deleteAssignment           controllers.AdminController.deleteAssignment(id: Int)
+
+
 
 
 # Map static resources from the /public folder to the /assets URL path
