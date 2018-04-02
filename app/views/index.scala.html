@@ -1,11 +1,18 @@
 @()
 @import helper._
 @main("Play Final Assignment") {
-  <h1>Home Page!</h1>
-<form action="@routes.ApplicationController.signup">
-  <input type="submit" value="SignUp"/>
+<br><br>
+<div class="container">
+<div class="jumbotron">
+<div align="center">
+  <h1>Home Page !</h1>
+  <form action="@routes.RegistrationController.signup">
+  <input  class="btn btn-info" type="submit" value="SignUp"/>
+</form><br>
+<form action="@routes.SigninController.loginForm">
+  <input class="btn btn-info" type ="submit" value="SigIn"/>
 </form>
-<form action="@routes.ApplicationController.signin">
-  <input type ="submit" value="SigIn"/>
-</form>
+</div>
+</div>
+</div>
 }

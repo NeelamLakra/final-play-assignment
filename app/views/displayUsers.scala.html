@@ -1,0 +1,47 @@
+@(listOfUsers: List[UserInfo])
+@main("Users list"){
+<div>
+    @adminnavbar()
+</div>
+<br>
+<div class="container">
+    <div class="text-center">
+        <h2>List of Users</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Enable User</th>
+                <th>Disable User</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for(user <- listOfUsers){
+            <tr>
+                <td>@user.firstname</td>
+                <td>@user.lastname</td>
+                @if(user.isEnable){
+                <td>
+                    <a type="button disabled" href="@routes.AdminController.enableOrDisableUser(user.username,"yes")">Enable</a>
+                </td>
+                <td>
+                    <a type="button" href="@routes.AdminController.enableOrDisableUser(user.username,"no")">Disable</a>
+
+                </td>
+                }else{
+                <td>
+                    <a type="button" href="@routes.AdminController.enableOrDisableUser(user.username,"yes")">Enable</a>
+                </td>
+                <td>
+                    <a type="button disabled" href="@routes.AdminController.enableOrDisableUser(user.username,"no")">Disable</a>
+
+                </td>
+                }
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+}
