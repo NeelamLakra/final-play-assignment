@@ -23,10 +23,10 @@
                 <td>@user.lastname</td>
                 @if(user.isEnable){
                 <td>
-                    <a type="button disabled" href="@routes.AdminController.enableOrDisableUser(user.username,"yes")">Enable</a>
+                    <a type="button disabled" href="@routes.AdminController.enableOrDisableUser(user.username,true)">Enable</a>
                 </td>
                 <td>
-                    <a type="button" href="@routes.AdminController.enableOrDisableUser(user.username,"no")">Disable</a>
+                    <a type="button" href="@routes.AdminController.enableOrDisableUser(user.username,false)">Disable</a>
 
                 </td>
                 }else{

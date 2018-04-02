@@ -28,19 +28,15 @@ class RegistrationController @Inject()(userForms: UserForms, cc: ControllerCompo
         val user = UserInfo(
           0,
           input.firstname,
-          input.middlename, input.lastName, input.username,
-          input.password, input.mobile, input.gender, input.age, input.hobbies, "valid", "yes"
+          input.middlename, input.lastname, input.username,
+          input.password, input.mobile, input.gender, input.age, input.hobbies, true, false
         )
         userInfoRepo.checkUserExists(input.username) flatMap {
           case true => Future.successful(Redirect(routes.SigninController.loginForm()).flashing("user exists" -> "user already exists, log in"))
           case false => userInfoRepo.store(user).map {
             case true =>
-              Redirect(routes.UserProfileController.showUser()).withSession("username" -> input.username, "isAdmin" -> "yes").flashing("success" -> "user created successfully")
+              Redirect(routes.UserProfileController.showUser()).withSession("username" -> input.username, "isAdmin" -> true.toString).flashing("success" -> "user created successfully")
             case false => InternalServerError("Could not create user")
-            //        userInfoRepo.store(user).map{
-            //          case true  =>      Redirect(routes.RegistrationController.userprofile())
-            //          case false =>       Redirect(routes.RegistrationController.signup())
-            //        }
           }
         }
       })

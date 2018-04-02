@@ -1,18 +1,22 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import models.{UserForms, UserInfoRepo, UserProfile}
+import models.{AssignmentInfoRepo, UserForms, UserInfoRepo, UserProfile}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AbstractController, ControllerComponents}
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
 @Singleton
-class UserProfileController @Inject()(userForms: UserForms, userInfoRepo: UserInfoRepo,cc: ControllerComponents) extends AbstractController(cc) with I18nSupport {
+class UserProfileController @Inject()(userForms: UserForms, userInfoRepo: UserInfoRepo,cc: ControllerComponents,assignmentInfoRepo: AssignmentInfoRepo) extends AbstractController(cc) with I18nSupport {
   implicit val message = cc.messagesApi
 
+  def userProfile() = Action {
+    implicit request =>
+      Ok(views.html.usernavbar())
+  }
 
   def showUser() = Action.async{
     implicit request =>
@@ -28,12 +32,17 @@ class UserProfileController @Inject()(userForms: UserForms, userInfoRepo: UserIn
               Ok(views.html.userprofile(filledProfileForm))
           }
         }
-        case None => Future.successful(InternalServerError("session expired, user not found"))
+        case None => Future.successful(InternalServerError("password cannot be changed"))
       }
   }
 
 
-
+  def userViewAssignments() = Action.async {
+    implicit request =>
+      assignmentInfoRepo.getAssignment.map {
+        assignmentsList => Ok(views.html.userDisplayAssignment(assignmentsList))
+      }
+  }
   def updateUser() = Action.async{
     implicit request =>
       userForms.userProfileForm.bindFromRequest().fold(

@@ -1,7 +1,7 @@
 @(listOfAssignments: List[Assignment])
 @main("Assignments list"){
 <div>
-    @adminnavbar()
+    @usernavbar()
 </div>
 <br>
 <br>
@@ -13,7 +13,6 @@
             <tr>
                 <th>Title</th>
                 <th>Description</th>
-                <th>Delete</th>
             </tr>
             </thead>
             <tbody>
@@ -21,9 +20,6 @@
             <tr>
                 <td>@assignment.title</td>
                 <td>@assignment.description</td>
-                <td>
-                    <a type="button" href="@routes.AdminController.deleteAssignment(assignment.id)">Delete</a>
-                </td>
             </tr>
             }
             </tbody>
