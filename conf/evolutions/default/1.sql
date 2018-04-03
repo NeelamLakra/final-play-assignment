@@ -1,15 +1,18 @@
 # --- !Ups
-CREATE TABLE userProfile(
-id Int AUTO_INCREMENT PRIMARY KEY,
-firstname VARCHAR(10),
-middlename VARCHAR(10),
-lastname VARCHAR(10),
-username VARCHAR(25) PRIMARY KEY,
-password VARCHAR(15),
-mobile INT(10),
-gender VARCHAR(10),
-age INT(5),
-hobbies VARCHAR(50)
+CREATE TABLE userProfile (
+ id  int(11)  NULL AUTO_INCREMENT,
+firstname  varchar(10),
+middlename  varchar(10),
+lastname    varchar(10),
+username    varchar(25),
+password    varchar(15),
+mobile      int(10),
+gender      varchar(10) ,
+age         int(5),
+hobbies  varchar(50),
+isEnable Boolean Default true,
+isAdmin    Boolean Default false,
+primary key(id,username)
 );
 
 

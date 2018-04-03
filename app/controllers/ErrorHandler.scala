@@ -1,14 +1,15 @@
 package controllers
 
+import play.api.mvc._
+import play.api.mvc.Results._
+
+import scala.concurrent._
 import javax.inject.Singleton
 import play.api.http.HttpErrorHandler
-import play.api.mvc.RequestHeader
-import play.api.mvc.Results.{InternalServerError, Status}
-
-import scala.concurrent.Future
 
 @Singleton
-class ErrorHandler  extends HttpErrorHandler{
+class ErrorHandler extends HttpErrorHandler {
+
   def onClientError(request: RequestHeader, statusCode: Int, message: String) = {
     Future.successful(
       Status(statusCode)("A client error occurred: " + message)
@@ -20,5 +21,4 @@ class ErrorHandler  extends HttpErrorHandler{
       InternalServerError("A server error occurred: " + exception.getMessage)
     )
   }
-
 }

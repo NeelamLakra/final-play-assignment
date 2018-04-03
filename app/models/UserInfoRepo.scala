@@ -53,8 +53,14 @@ trait UserProfileRepo {
   def updatePassword(userName: String,newPassword: String): Future[Boolean]
   def isUserEnabled(userName: String): Future[Boolean]
   def enableDisableUser(userName: String,newValue: Boolean): Future[Boolean]
-  def getAllUsers: Future[List[UserInfo]]
+  def getAllUsers(): Future[List[UserInfo]]
   def validateUser(userName: String,password: String): Future[Option[UserInfo]]
+  def isAdminCheck(userName: String): Future[Boolean]
+  def getUser(): Future[List[UserInfo]]
+  def enable(userName: String):Future[Boolean]
+  def disable(userName: String):Future[Boolean]
+  def isEnableCheck(userName:String): Future[Boolean]
+  def validationOfUser(userName: String,password: String): Future[Boolean]
 
 
 }
@@ -64,32 +70,26 @@ trait UserProfileRepoImple extends UserProfileRepo {
 
   import profile.api._
 
-  def isAdminCheck(emailId: String): Future[Boolean] = {
-    db.run(UserQuery.filter(user=> user.username === emailId && user.isAdmin).to[List].result).map(_.nonEmpty)
+  def isAdminCheck(userName: String): Future[Boolean] = {
+    db.run(UserQuery.filter(user=> user.username === userName && user.isAdmin).to[List].result).map(_.nonEmpty)
   }
 
   def getUser(): Future[List[UserInfo]] = {
     db.run(UserQuery.filter(_.isAdmin===true).to[List].result)
   }
 
-  def enable(emailId: String)=
-    db.run(UserQuery.filter(_.username===emailId).map(_.isEnable).update(true)).map(_>0)
+  def enable(userName: String):Future[Boolean]=
+    db.run(UserQuery.filter(_.username===userName).map(_.isEnable).update(true)).map(_>0)
 
-  def disable(emailId: String) =
-    db.run(UserQuery.filter(_.username === emailId).map(_.isEnable).update(false)).map(_>0)
+  def disable(userName: String):Future[Boolean] =
+    db.run(UserQuery.filter(_.username === userName).map(_.isEnable).update(false)).map(_>0)
 
-  def isEnableCheck(emailId:String): Future[Boolean] = {
-    db.run(UserQuery.filter(user => user.username === emailId && user.isEnable).to[List].result).map(_.nonEmpty)
-  }
-  def getUserName(emailId: String): Future[String] = {
-    val name = (for (user <- UserQuery if user.username === emailId) yield user.firstname).result.headOption
-    db.run(name).map {
-      case Some(firstName) => firstName
-    }
+  def isEnableCheck(userName:String): Future[Boolean] = {
+    db.run(UserQuery.filter(user => user.username === userName && user.isEnable).to[List].result).map(_.nonEmpty)
   }
 
-  def validationOfUser(emailId: String,password: String): Future[Boolean] = {
-    val queryResult = UserQuery.filter(user => user.username=== emailId && user.password === password).result.headOption
+  def validationOfUser(userName: String,password: String): Future[Boolean] = {
+    val queryResult = UserQuery.filter(user => user.username=== userName && user.password === password).result.headOption
     db.run(queryResult)
       .map{
         case Some(_) => true
@@ -98,14 +98,11 @@ trait UserProfileRepoImple extends UserProfileRepo {
   }
 
 
-
-
-  def getAllUsers: Future[List[UserInfo]] =
+  def getAllUsers(): Future[List[UserInfo]] =
     db.run(UserQuery.filter(user => user.isAdmin === false).to[List].result)
 
   def validateUser(userName: String,password: String): Future[Option[UserInfo]] =
     db.run(UserQuery.filter(user => user.username === userName && user.password === password ).result.headOption)
-
 
 
   def store(userInfo: UserInfo): Future[Boolean] =

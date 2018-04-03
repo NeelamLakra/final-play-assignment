@@ -1,7 +1,7 @@
 package models
 
 import javax.inject.Inject
-
+import play.api.cache.AsyncCacheApi
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
@@ -13,7 +13,7 @@ case class Assignment(id: Int,
                       title: String,
                       description: String)
 
-class AssignmentInfoRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends AssignmentRepositoryTable with AssignmentFunctions {
+class AssignmentInfoRepo @Inject()(cache:AsyncCacheApi)(protected val dbConfigProvider: DatabaseConfigProvider) extends AssignmentRepositoryTable with AssignmentFunctions {
 
   import profile.api._
 
@@ -23,7 +23,7 @@ class AssignmentInfoRepo @Inject()(protected val dbConfigProvider: DatabaseConfi
   override def deleteAssignment(id: Int): Future[Boolean] =
     db.run(assignmentQuery.filter(assignment => assignment.id === id).delete).map(_ > 0)
 
-  override def getAssignment: Future[List[Assignment]] =
+  override def getAssignment(): Future[List[Assignment]] =
     db.run(assignmentQuery.to[List].result)
 
 }
